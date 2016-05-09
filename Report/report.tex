@@ -1,0 +1,67 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{listings}
+\usepackage[parfill]{parskip}
+\title{exjobb}
+\author{ }
+\date{May 2016}
+
+\usepackage{natbib}
+\usepackage{graphicx}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+\section{Preparing images}
+Since this thesis is for a company which does not have purely academical purposes, the images are not allowed to be downloaded directly from the image.net web page. Instead, a list of URL's is available to make the images reachable even by institutions which have some kind of commercial vision with their research.
+
+\subsection{Downloading images}
+The list of URL's also contain tags belonging to each URL. All images from the list of URL's can be downloaded with a python script.
+
+The images in the image net are poorly hosted. When trying to download 500 images randomly sampled from the images added to the data set in the fall of 2011, only 455 images are retrieved with the download-script. Additionally, many of the images are broken and has to be removed. In Linux, to remove most of the broken images, the following command can be used 
+\begin{lstlisting}
+find . -size -30k -delete
+\end{lstlisting} to find and delete files in the current folder of size less than 30 kilobyte. After these small files are removed, manual inspection is the last control to remove the rest of the trash. Some images contains text added after the image was taken, for example the one in figure \ref{fig:img_with_text} below.
+After these have been removed, there are 271 images left.
+
+\subsection{Extracting lightness channel}
+Extract the Lightness channel (L from LAB color space). 
+
+\begin{figure}[hbtp]
+\centering
+\includegraphics[scale=0.3]{withtext2.jpg}
+\caption{An image from Image Net which might be unsuited for training neural networks due to the text in it}
+\label{fig:img_with_text}
+\end{figure}
+
+A large data set of corresponding low- and high-quality images is needed for training of the neural network. This week I will select one data set (MS COCO, Image net, or some other well known image set publicly available) and produce low-quality copies of the good images. The high quality images will be blurred, and noise will be added. How much? 
+
+When the set is downloaded, will have to make sure that all the images can be considered high-quality. Webcam and poor-quality photos won't do. Even though there will be a lot of images, I will manually look at the images and determine if the image is good enough. Some of the images has been moved from the host and is no longer available from the URL specified by the text-file. The download script will still produce images with proper file names out of those failed downloads, so manual inspection of the images will also serve the purpose of finding the broken files. 
+
+\subsection{Scaling images}
+When it comes to scaling the downloaded images to fit the input layer of the neural network, there are two alternatives of how to do it. 
+
+When resizing an image to a square, it can be cropped to the desired dimension. However, the meaning of the image might then be totally lost. Some sort of scaling is probably desired. 
+
+The first alternative is to preserve the height and width ratio, scale the image so that the smallest dimension (most likely height) is of the desired pixel dimension, and then crop the rest so that a square is left. 
+
+The other alternative is to scale the image non-uniformly, thus compressing the image more in its width than height (for most images). 
+
+Since the semantics and structure of the images are important for determining the object in DNN's, it is desirable not to change the relative size between the height and the width in an image. Because of that, the first approach seems to be more sensible. In the colorization paper, however, the second approach is used, and the image is re sized in a way that distorts the perspectives in the image. In the first attempt, the approach used in the paper will be used, and a note is made to try the other approach when looking for improvements. 
+
+The re-sizing can be done in bash by
+
+\begin{lstlisting}
+for name in /path/to/imagenet/val/*.JPEG; do
+    convert -resize 256x256\! $name $name
+done
+\end{lstlisting}
+
+\section{Conclusion}
+
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
