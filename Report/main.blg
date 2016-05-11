@@ -1,0 +1,55 @@
+This is BibTeX, Version 0.99d (TeX Live 2013/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: main.aux
+The style file: plainnat.bst
+A level-1 auxiliary file: tack.aux
+A level-1 auxiliary file: notation.aux
+A level-1 auxiliary file: introduction.aux
+A level-1 auxiliary file: context.aux
+A level-1 auxiliary file: results.aux
+A level-1 auxiliary file: avrundning.aux
+A level-1 auxiliary file: detaljer.aux
+A level-1 auxiliary file: rtthesis-doc.aux
+Database file #1: IEEEfull.bib
+Database file #2: myrefs.bib
+You've used 6 entries,
+            2773 wiz_defined-function locations,
+            1047 strings with 16953 characters,
+and the built_in function-call counts, 2270 in all, are:
+= -- 188
+> -- 129
+< -- 4
++ -- 45
+- -- 39
+* -- 170
+:= -- 375
+add.period$ -- 20
+call.type$ -- 6
+change.case$ -- 31
+chr.to.int$ -- 6
+cite$ -- 12
+duplicate$ -- 118
+empty$ -- 189
+format.name$ -- 47
+if$ -- 461
+int.to.chr$ -- 1
+int.to.str$ -- 1
+missing$ -- 8
+newline$ -- 40
+num.names$ -- 24
+pop$ -- 63
+preamble$ -- 1
+purify$ -- 25
+quote$ -- 0
+skip$ -- 86
+stack$ -- 0
+substring$ -- 12
+swap$ -- 8
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 56
+warning$ -- 0
+while$ -- 18
+width$ -- 0
+write$ -- 87
