@@ -1,5 +1,7 @@
 \chapter{Background and Context}\label{cha:cont}
 
+%\documentclass{report}
+%\begin{document}
 In this chapter, the background and context to this thesis will be explained. After reading this chapter, the reader will be up to date with some of the recent developments in deep neural networks and other methods that have been used to enhance images. 
 
 Some interesting techniques in neural networks regarding convergence of the networks, faster training, higher accuracy and other tricks and optimizations will be presented as well.
@@ -67,7 +69,7 @@ The last and perhaps most artistic concept in color improvement are the neural n
 
 
 \textbf{Colorization of black and white images}
-The first paper to propose a deep neural network for colorization of black and white images is named "Deep Colorization" \citep{2016arXiv160500075C}
+The first paper to propose a deep neural network for colorization of black and white images is named "Deep Colorization" %\citep{2016arXiv160500075C}
 \textbf{Improving on already present colors}
 
 \textbf{Style transfer}
@@ -83,9 +85,57 @@ In this section, a collection of interesting methods regarding the trade of neur
 Despite that one trick might be developed with classification in mind, it might show beneficial to use within other sub-genres of neural networks as well, like image segmentation, super-resolution and others. 
 
 \subsection{Deep supervision}
-The technique called \emph{Deep Supervision} was presented in the paper \emph{Deeply-Supervised Nets} \citep{Deep-supervision}. The concept is that instead of just using a loss function after the last layer in the network, adding extra loss functions after some hidden layers. The idea was to tackle the diminishing gradient- and the exploding gradient problems, in which it is difficult to perform the update on the weights far away from the loss layer since the gradient of the error with respect to the weight might decrease or increase multiple time during the back propagation. 
+The technique called \emph{Deep Supervision} is presented in the paper \emph{Deeply-Supervised Nets} from 2014 %\citep{Deep-supervision}. 
+The concept is that instead of just using a loss function after the last layer in the network, extra loss functions after some of the hidden layers are added. These introduced loss functions aim at reducing the error of the so called \emph{companion objective}. The problem formulation is to find weights in layers of an artificial neural network such that a classifier at the end of it performs as well as possible. The performance from the final classifier is sought at the same time as some level of performance of the hidden layers are observed. 
 
-But that is not all. Deep supervision also addresses another issue in training, namely convergence of the feature maps. Since we are peaking into the inner layers of the network, the weights can be guided towards better feature representations, faster. 
+One idea was that this method would tackle the diminishing gradient- and the exploding gradient problems, in which it is difficult to perform the update on the weights far away from the loss layer since the gradient of the error with respect to the weight might decrease or increase multiple times during the back propagation. 
+
+But that is not all. Deep supervision also addresses another issue in training, namely convergence of the feature maps. Since we are peeking into the inner layers of the network, the weights can be guided towards better feature representations, faster. 
+
+The commonly used backpropagation is still used, but in combination with the newly introduced loss functions at the hidden layers. One interesting property that the authors of the article experienced is that the testing error decreased when deep supervision was introduced, but not always the training error. The networks did converge faster, and that was especially noticeable in smaller training sets. When compared to a state-of-the-art CNN without deep supervision, both reached training error close to zero, but the deeply supervised net was able to generalize better. 
+
+A new combined objective function is defined as follows:
+
+\begin{equation}
+||\textbf{w}^{(out)}||^2 + \mathcal{L}(W, \textbf{w}^{(out)}) + \sum\limits_{m = 1}^{M - 1}\alpha_m[|\textbf{w}^{(m)}||^2 + \ell(W, \textbf{w}^{(m)} - \gamma]_+
+\end{equation}
+
+with $\textbf{w}^{m}$ as the classifier for layer m, with M as the last layer. It could be a Softmax classifier, or an SVM for example. In the original paper there was one classifier per hidden layer (and one for the output layer), but it is also possible to only supervise a few of the hidden layers in this fashion. That was done in \emph{Colorful Colorization} %/citep{Colorful-colorization}.
+
+$\mathcal{L}(\bullet)$ is named the \emph{overall loss}, and is the classic loss function which depends only on the weights $W$ in the net producing the output, and the classification after the final layer $\textbf{w}^{(out)}$. It is defined like:
+
+\begin{equation}
+\mathcal{L}(W, \textbf{w}^{(out)}) = \sum\limits_{y_k \neq y} [1 - < \textbf{w}^{(out)}, \phi(\textbf{Z}^{(M)}, y) / \phi(\textbf{Z}^{(M)}, y_k) >]^{2}_+
+\end{equation}
+
+and
+
+\begin{equation}\label{eq:deep_loss}
+\ell(W, \textbf{w}^{(m)} = \sum\limits_{y_k \neq y} [1 - < \textbf{w}^{(m)}, \phi(\textbf{Z}^{(m)}, y) / \phi(\textbf{Z}^{(M)}, y_k) >]^{2}_+
+\end{equation}
+
+$\alpha_m$ is a weighting factor for the importance of the classification being correct in the layer $m$, and balances the importance with the output objective $\mathcal{L}$.
+
+A contant factor $\gamma$ is included together with the $_+$ operator (0 if $[\bullet]$ is smaller than 0), because hinge loss is used. %\cite{https://en.wikipedia.org/wiki/Hinge_loss} is wikipedia ok to cite?
+
+The $||\textbf{w}^{(m)}||$ in equation ?%\eqref{eq:deep_loss}
+ is interpreted as the margin of the classifier, and we include the term to make the margin small. 
+
+$\textbf{Z}^{(m)}$ is the feature map at layer $m$ and is the result of a pooling operation on the response of the convolution in the same layer. $\textbf{Z}^{(0)}$ is thus the input.
+
+When training the network, the gradients are updated to take the companion objective into consideration. Deep supervision works well for SGD, \emph{Stochastic Gradient Descent} and the update rules are as follows:
+
+\begin{equation}
+\frac{\partial F}{\partial \textbf{w}^{(out)}} = 2\textbf{w}^{(out)} - 2\sum\limits_{y_k \neq y}[\phi(\textbf{Z}^{(M)},y) - \phi({Z}^{(M)},y_k)][1 - <\textbf{w}^{(out)}, \phi(\textbf{Z}^{(M)},y) - \phi({Z}^{(M)},y_k>]_+
+\end{equation}
+
+\begin{equation}
+\resizebox{.5 \textwidth}{!}
+\frac{\partial F}{\partial \textbf{w}^{(m)}} = \begin{cases}
+0, &\text{if ||\textbf{w}$^{(m)}||^2 + \ell(W,\textbf{w}^{(m)}) \leq \gamma $} \\%}\\
+\alpha_m\{2\textbf{w}^{(m)}-2\sum\limits_{y_k \neq y}[\phi(\textbf{Z}^{(m)},y) - \phi({Z}^{(m)},y_k)][1 - <\textbf{w}^{(m)}, \phi(\textbf{Z}^{(m)},y) - \phi({Z}^{(m)},y_k>] \} &\text{otherwise}
+\end{cases}
+\end{equation}
 
 
 
@@ -95,12 +145,5 @@ But that is not all. Deep supervision also addresses another issue in training, 
 
 
 
-
-
-
-
-
-
-
-
+%\end{document}
 
