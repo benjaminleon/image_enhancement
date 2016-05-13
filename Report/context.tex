@@ -100,7 +100,7 @@ A new combined objective function is defined as follows:
 ||\textbf{w}^{(out)}||^2 + \mathcal{L}(W, \textbf{w}^{(out)}) + \sum\limits_{m = 1}^{M - 1}\alpha_m[|\textbf{w}^{(m)}||^2 + \ell(W, \textbf{w}^{(m)} - \gamma]_+
 \end{equation}
 
-with $\textbf{w}^{m}$ as the classifier for layer m, with M as the last layer. It could be a Softmax classifier, or an SVM for example. In the original paper there was one classifier per hidden layer (and one for the output layer), but it is also possible to only supervise a few of the hidden layers in this fashion. That was done in \emph{Colorful Colorization} %/citep{Colorful-colorization}.
+with $\textbf{w}^{m}$ as the classifier for layer m, and M as the last layer. In the equations, the classifier is a \emph{SVM}, \emph{Support Vector Machine}, but other classifiers such as Softmax may also be used. In the original paper there was one classifier per hidden layer (and one for the output layer), but it is also possible to only supervise a few of the hidden layers in this fashion. That was done in \emph{Colorful Colorization} %/citep{Colorful-colorization}.
 
 $\mathcal{L}(\bullet)$ is named the \emph{overall loss}, and is the classic loss function which depends only on the weights $W$ in the net producing the output, and the classification after the final layer $\textbf{w}^{(out)}$. It is defined like:
 
@@ -119,7 +119,7 @@ $\alpha_m$ is a weighting factor for the importance of the classification being 
 A contant factor $\gamma$ is included together with the $_+$ operator (0 if $[\bullet]$ is smaller than 0), because hinge loss is used. %\cite{https://en.wikipedia.org/wiki/Hinge_loss} is wikipedia ok to cite?
 
 The $||\textbf{w}^{(m)}||$ in equation ?%\eqref{eq:deep_loss}
- is interpreted as the margin of the classifier, and we include the term to make the margin small. 
+ is interpreted as the margin of the classifier, and we include the term to make the margin small. \Warning[TODO]{why would they want a small margin?}
 
 $\textbf{Z}^{(m)}$ is the feature map at layer $m$ and is the result of a pooling operation on the response of the convolution in the same layer. $\textbf{Z}^{(0)}$ is thus the input.
 
@@ -130,18 +130,15 @@ When training the network, the gradients are updated to take the companion objec
 \end{equation}
 
 \begin{equation}
-\resizebox{.5 \textwidth}{!}
-\frac{\partial F}{\partial \textbf{w}^{(m)}} = \begin{cases}
-0, &\text{if ||\textbf{w}$^{(m)}||^2 + \ell(W,\textbf{w}^{(m)}) \leq \gamma $} \\%}\\
-\alpha_m\{2\textbf{w}^{(m)}-2\sum\limits_{y_k \neq y}[\phi(\textbf{Z}^{(m)},y) - \phi({Z}^{(m)},y_k)][1 - <\textbf{w}^{(m)}, \phi(\textbf{Z}^{(m)},y) - \phi({Z}^{(m)},y_k>] \} &\text{otherwise}
-\end{cases}
+\frac{\partial F}{\partial \textbf{w}^{(m)}} = 0, \text{if ||\textbf{w}$^{(m)}||^2 + \ell(W,\textbf{w}^{(m)}) \leq \gamma $}
 \end{equation}
 
+otherwise, then:
 
-
-
-
-
+\begin{equation}
+\frac{\partial F}{\partial \textbf{w}^{(m)}} =
+\alpha_m\{2\textbf{w}^{(m)}-2\sum\limits_{y_k \neq y}[\phi(\textbf{Z}^{(m)},y) - \phi({Z}^{(m)},y_k)][1 - <\textbf{w}^{(m)}, \phi(\textbf{Z}^{(m)},y) - \phi({Z}^{(m)},y_k>] \}
+\end{equation}
 
 
 
