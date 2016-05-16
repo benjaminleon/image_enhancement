@@ -59,25 +59,32 @@ Quite a few concepts will be explained here, with references to further reading 
 
 
 \subsection{Color improvement}
-In color improvement, several sub-fields are being researched, each with different views on how the image is interpreted as "better". Some recent articles have explored the task of colorizing black and white photos. This has been done with and without neural networks, some times in an end-to-end fashion and some times not. In some works, example images of similar scenes and colors to the one that shall be colorized is used in the algorithm. In some cases, a deep neural network is trained on hundreds, thousands, or a million of images to learn how to colorize black and white images. Colorization of a black and white image can also lead to higher classification accuracy performance by nerual networks, as shown in the "Colorful Colorization" paper. 
+In color improvement, several sub-fields are being researched, each with different views on how the image is interpreted as "better". Some recent articles have explored the task of colorizing black and white photos. This has been done with and without neural networks, some times in an end-to-end fashion and some times not. In some works, example images of similar scenes and colors to the one that shall be colorized is used in the algorithm. In some cases, a deep neural network is trained on hundreds, thousands, or a million of images to learn how to colorize black and white images. Colorization of a black and white image can also lead to higher classification accuracy performance by neural networks, as shown in the "Colorful Colorization" paper. 
 
 On reddit (reddit.com/r/colorization), people colorize black and white images by hand.
 
-Apart from colorizing images which has no color, another interesting topic is to improve on image where color is already present. Such methods are of great interest to the consumer markets, image editing applications, and to companies which are working with various kinds of cameras where a subjective measure of image quality is belongs, for example video streams. 
+Apart from colorizing images which has no color, another interesting topic is to improve on image where color is already present. Such methods are of great interest to the consumer markets, image editing applications, and to companies which are working with various kinds of cameras where a subjective measure of image quality makes sense, for example video in streams. 
 
 The last and perhaps most artistic concept in color improvement are the neural networks which are trained to morph one image so that it fits a style of another. 
 
 
 \textbf{Colorization of black and white images}
-The first paper to propose a deep neural network for colorization of black and white images is named "Deep Colorization" %\citep{2016arXiv160500075C}
+The first paper to propose a deep neural network for automatic colorization of black and white images is named \emph{Deep Colorization} \citep{Deep-colorization}. The best results on colorization as of writing are demonstrated in the article \emph{Colorful Image Colorization} \citep{Colorful-colorization}, where a trick is utilized to make the network predict more saturated colors than by other methods. In \emph{Automatic Colorization} \citep{Automatic-colorization}, hypercolumns are used. In \emph{Let there be Color!: Joint End-to-end Learning of Global and Local Image Priors for Automatic Image Colorization with Simultaneous Classification}, classification and colorization is performed concurrently. The image is copied into two, where each is let to run through two networks, which then merge with information about low-, mid-, and global-level features in a final colorization scheme \citep{Lettherebecolor}. An approach for colorizing black and white images without a neural network is described in \emph{Image Colorization Using Similar Images} \citep{Gupta}. When using that method, the user has to provide the algorithm with an image which has similar colors as the image to be colored. From there, the area in the black and white image will be colored from the areas in the color image where the structure is similar. Other methods collect reference images from the internet. Here a sufficiently famous object has to be present and labeled in the image, so that the system may automatically find similar reference images online and use them to colorize the black and white image. Such methods are described in \emph{Semantic Colorization with Internet Images} \citep{Semantic-Internet}, and \emph{Intrinsic Colorization} \citep{2008-intrinsic}.
+
+
 \textbf{Improving on already present colors}
+There is the article \emph{Automatic Photo Adjustment Using Deep Neural Networks} \citep{Automatic-adjustment} which presents a method which is able to mimic an artist's enhancement of photos.
 
 \textbf{Style transfer}
+In \emph{A Neural Algorithm of Artistic Style} \citep{Gatys}, the network is trained on an image to capture the style of it and project it on another image. 
+In \emph{Perceptual Losses for Real-Time Style Transfer and Super-Resolution} \citep{Perceptual-losses}, the standard pixel to pixel loss function is replaced with a loss function which is shown to work well for super-resolution. After the network has transformed an image, the resulting image is run through another neural network (called a loss network) and the output from different layers is saved and compared to the output from the same layers when the ground truth image is run through the loss network. This is where the loss function is defined, and the error gradients are backpropagated back to the trained network. In a faster way, but which yields similar results to \emph{A neural Algorithm of Artistic Style}, \emph{Texture Networks: Feed-forward Synthesis of Textures and Stylized Images} \citep{Texture-net} transform one image to fit the style of another. They also use their network to generate textures with help from samples. 
 
 \subsection{Super resolution}
 When trying to improve the resolution in an image, an up sampling is what happens. The standard ways of performing up sampling are still strong benchmarks against the newly developing techniques. The bilinear up sampling method does not produce high quality up sampling, but is good for visualising a low resolution image on a screen. The bicubic interpolation method produces blurred compared to the bilinear method, but more details become present. 
 
 In recent papers, the developed methods still usually compare their results to the bicubic method along with other researchers' methods.
+
+\emph{Perceptual Losses for Real-Time Style Transfer and Super-Resolution} \citep{Perceptual-losses} is not only used to perform style-transfer as described in the previous subsection, but is shown to be very succesful in upsampling images by the factors 4, and 8. Another succesful neural network approach is shown in \emph{Image Super-Resolution Using Deep Convolutional Networks} \citep{SRCNN}, where images are downsampled as a preprocessing step to training, and then upsampled again to serve as input to the network and the desired output is the original image. They let a fully convolutional neural network learn the mapping between low-resolution to high-resolution by an end to end fashion. 
 
 \section{Tricks of the trade}
 In this section, a collection of interesting methods regarding the trade of neural networks will be presented. Neural networks has been given a reputation of being black boxes, which receives inputs and gives an output; but nobody understands how and why the cogs are turning on the inside. Some of the tricks of the trade discussed in this section were developed with aims to make the training and understanding of the neural networks more transparent; they aim at opening up the black box and put a flash light to it. Others aim at speeding up the training, which can be excruciatingly slow for large models and large data sets. During training, the networks may get stuck in local optima for their loss functions; the aim of some tricks are to improve on convergence during training. Others aim at achieving higher classification accuracy. 
@@ -140,7 +147,17 @@ otherwise, then:
 \alpha_m\{2\textbf{w}^{(m)}-2\sum\limits_{y_k \neq y}[\phi(\textbf{Z}^{(m)},y) - \phi({Z}^{(m)},y_k)][1 - <\textbf{w}^{(m)}, \phi(\textbf{Z}^{(m)},y) - \phi({Z}^{(m)},y_k>] \}
 \end{equation}
 
+\subsection{Batch Normalization}
+Since its presentation in 2015, the trick of the \emph{Batch Normalization} technique \citep{Batchnorm} has been incorporated in many architectures, with tasks including classification, colorizing black and white photos (http://tinyclouds.org/colorize/),\citep{Colorful-colorization}, style transfer \citep{Perceptual-losses} and super-resolution \citep{Perceptual-losses}. 
+
+The trick is to make sure that the distribution of the inputs to the layers in the network are always the same. This is done by a normalization step, which is the so called Batch Normalization technique. The method accelerates the training of deep neural nets. Much higher learning rates can be used, and the need for the Dropout technique diminishes. Batch normalization also makes it possible to use saturating nonlinearities (like the hyperbolic tanh function, or the $\frac{1}{1 + e^{-x}}$ activation function) because the method helps the network from getting stuck in the saturated regions. 
+
+\subsection{Dropout}
+\emph{Dropout} \citep{Dropout} is a technique which is performed during the training phase. A random number of nodes (usually somewhere around 50\%) are ignored, meaning that their activations are 0 no matter the input, and that their weights are not updated. By not updating all the nodes at once, they are encouraged to independently find useful features and the problem with nodes being very similar to other nodes in the same layer is reduced. 
 
 
-%\end{document}
+
+
+
+
 
