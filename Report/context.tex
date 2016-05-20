@@ -1,7 +1,5 @@
 \chapter{Background and Context}\label{cha:cont}
 
-%\documentclass{report}
-%\begin{document}
 In this chapter, the background and context to this thesis will be explained. After reading this chapter, the reader will be up to date with some of the recent developments in deep neural networks and other methods that have been used to enhance images. 
 
 Some interesting techniques in neural networks regarding convergence of the networks, faster training, higher accuracy and other tricks and optimizations will be presented as well.
@@ -52,30 +50,33 @@ The gradients for the weights in the last layer can be calculated easiest since 
 
 That is the basics and some intuition about how the neural networks work. 
 
-\section{Advances in Images Enhancement}
+\section{Advances in Image Enhancement}
 In this section we change gears and move into more advanced details of neural networks with their and other methods for advances in image enhancement during the recent years.
 
 Quite a few concepts will be explained here, with references to further reading or the original papers from which these concepts or methods emerged. In the literature, the problem of improving images may be divided into two main categories: color improvement, and resolution improvement. In both categories, methods which does not include any kind of machine learning has been used previously, but seem to swiftly being phased out by learning algorithms. Since neural networks is such a new field, it is to no surprise that many researchers want to explore them. It is like a newly found mine with promise of gold and opportunities. Neural networks are showing a great deal of promise and are already  performing very well on both color improvement tasks and resolution improvement. 
 
 
 \subsection{Color improvement}
-In color improvement, several sub-fields are being researched, each with different views on how the image is interpreted as "better". Some recent articles have explored the task of colorizing black and white photos. This has been done with and without neural networks, some times in an end-to-end fashion and some times not. In some works, example images of similar scenes and colors to the one that shall be colorized is used in the algorithm. In some cases, a deep neural network is trained on hundreds, thousands, or a million of images to learn how to colorize black and white images. Colorization of a black and white image can also lead to higher classification accuracy performance by neural networks, as shown in the "Colorful Colorization" paper. 
+In color improvement, several sub-fields are being researched, each with different views on how the image is interpreted as "better". Some recent articles have explored the task of colorizing black and white photos. This has been done with and without neural networks, some times in an end-to-end fashion and some times not. In some works, example images of similar scenes and colors to the one that shall be colorized is used in the algorithm. In some cases, a deep neural network is trained on hundreds, thousands, or a million of images to learn how to colorize black and white images. Colorization of a black and white image can also lead to higher classification accuracy performance by neural networks, as shown in the "Colorful Colorization" paper \citep{Colorful-colorization}. 
 
 On reddit (reddit.com/r/colorization), people colorize black and white images by hand.
+\Warning[TODO]{There are 2 more sub forums, add links to those too}
 
 Apart from colorizing images which has no color, another interesting topic is to improve on image where color is already present. Such methods are of great interest to the consumer markets, image editing applications, and to companies which are working with various kinds of cameras where a subjective measure of image quality makes sense, for example video in streams. 
 
 The last and perhaps most artistic concept in color improvement are the neural networks which are trained to morph one image so that it fits a style of another. 
 
 
-\textbf{Colorization of black and white images}
-The first paper to propose a deep neural network for automatic colorization of black and white images is named \emph{Deep Colorization} \citep{Deep-colorization}. The best results on colorization as of writing are demonstrated in the article \emph{Colorful Image Colorization} \citep{Colorful-colorization}, where a trick is utilized to make the network predict more saturated colors than by other methods. In \emph{Automatic Colorization} \citep{Automatic-colorization}, hypercolumns are used. In \emph{Let there be Color!: Joint End-to-end Learning of Global and Local Image Priors for Automatic Image Colorization with Simultaneous Classification}, classification and colorization is performed concurrently. The image is copied into two, where each is let to run through two networks, which then merge with information about low-, mid-, and global-level features in a final colorization scheme \citep{Lettherebecolor}. An approach for colorizing black and white images without a neural network is described in \emph{Image Colorization Using Similar Images} \citep{Gupta}. When using that method, the user has to provide the algorithm with an image which has similar colors as the image to be colored. From there, the area in the black and white image will be colored from the areas in the color image where the structure is similar. Other methods collect reference images from the internet. Here a sufficiently famous object has to be present and labeled in the image, so that the system may automatically find similar reference images online and use them to colorize the black and white image. Such methods are described in \emph{Semantic Colorization with Internet Images} \citep{Semantic-Internet}, and \emph{Intrinsic Colorization} \citep{2008-intrinsic}.
+\subsubsection{Colorization of black and white images}
+The first paper to propose a deep neural network for automatic colorization of black and white images is named \emph{Deep Colorization} \citep{Deep-colorization}. The best results on colorization as of writing are demonstrated in the article \emph{Colorful Image Colorization} \citep{Colorful-colorization}, where several tricks are utilized to make the network predict more saturated colors than by other methods. In \emph{Automatic Colorization} \citep{Automatic-colorization}, hypercolumns are used. In \emph{Let there be Color!: Joint End-to-end Learning of Global and Local Image Priors for Automatic Image Colorization with Simultaneous Classification}, classification and colorization is performed concurrently. The image is copied into two, where each is let to run through two networks, which then merge with information about low-, mid-, and global-level features in a final colorization scheme \citep{Lettherebecolor}. An approach for colorizing black and white images without a neural network is described in \emph{Image Colorization Using Similar Images} \citep{Gupta}. When using that method, the user has to provide the algorithm with an image which has similar colors as the image to be colored. From there, the area in the black and white image will be colored from the areas in the color image where the structure is similar. Other methods collect reference images from the internet. Here a sufficiently famous object has to be present and labeled in the image, so that the system may automatically find similar reference images online and use them to colorize the black and white image. Such methods are described in \emph{Semantic Colorization with Internet Images} \citep{Semantic-Internet}, and \emph{Intrinsic Colorization} \citep{2008-intrinsic}.
 
+\subsubsection{The averaging problem}\label{Averaging-problem}
+Here the averaging problem will be discussed, and how they are solved in \emph{Colorful Colorization}, and \emph{Learning Representations for Automatic Colorization} by building probability estimates for the possible colors for each pixel. Inspired by \emph{Automatic Image Colorization Via Multimodal Predictions} \citep{Multimodal2008}, 
 
-\textbf{Improving on already present colors}
+\subsubsection{Improving on already present colors}
 There is the article \emph{Automatic Photo Adjustment Using Deep Neural Networks} \citep{Automatic-adjustment} which presents a method which is able to mimic an artist's enhancement of photos.
 
-\textbf{Style transfer}
+\subsubsection{Style transfer}
 In \emph{A Neural Algorithm of Artistic Style} \citep{Gatys}, the network is trained on an image to capture the style of it and project it on another image. 
 In \emph{Perceptual Losses for Real-Time Style Transfer and Super-Resolution} \citep{Perceptual-losses}, the standard pixel to pixel loss function is replaced with a loss function which is shown to work well for super-resolution. After the network has transformed an image, the resulting image is run through another neural network (called a loss network) and the output from different layers is saved and compared to the output from the same layers when the ground truth image is run through the loss network. This is where the loss function is defined, and the error gradients are backpropagated back to the trained network. In a faster way, but which yields similar results to \emph{A neural Algorithm of Artistic Style}, \emph{Texture Networks: Feed-forward Synthesis of Textures and Stylized Images} \citep{Texture-net} transform one image to fit the style of another. They also use their network to generate textures with help from samples. 
 
@@ -92,8 +93,7 @@ In this section, a collection of interesting methods regarding the trade of neur
 Despite that one trick might be developed with classification in mind, it might show beneficial to use within other sub-genres of neural networks as well, like image segmentation, super-resolution and others. 
 
 \subsection{Deep supervision}
-The technique called \emph{Deep Supervision} is presented in the paper \emph{Deeply-Supervised Nets} from 2014 %\citep{Deep-supervision}. 
-The concept is that instead of just using a loss function after the last layer in the network, extra loss functions after some of the hidden layers are added. These introduced loss functions aim at reducing the error of the so called \emph{companion objective}. The problem formulation is to find weights in layers of an artificial neural network such that a classifier at the end of it performs as well as possible. The performance from the final classifier is sought at the same time as some level of performance of the hidden layers are observed. 
+The technique called \emph{Deep Supervision} is presented in the paper \emph{Deeply-Supervised Nets} from 2014 \citep{Deep-supervision}. The concept is that instead of just using a loss function after the last layer in the network, extra loss functions after some of the hidden layers are added. These introduced loss functions aim at reducing the error of the so called \emph{companion objective}. The problem formulation is to find weights in layers of an artificial neural network such that a classifier at the end of it performs as well as possible. The performance from the final classifier is sought at the same time as some level of performance of the hidden layers are observed. 
 
 One idea was that this method would tackle the diminishing gradient- and the exploding gradient problems, in which it is difficult to perform the update on the weights far away from the loss layer since the gradient of the error with respect to the weight might decrease or increase multiple times during the back propagation. 
 
@@ -154,6 +154,38 @@ The trick is to make sure that the distribution of the inputs to the layers in t
 
 \subsection{Dropout}
 \emph{Dropout} \citep{Dropout} is a technique which is performed during the training phase. A random number of nodes (usually somewhere around 50\%) are ignored, meaning that their activations are 0 no matter the input, and that their weights are not updated. By not updating all the nodes at once, they are encouraged to independently find useful features and the problem with nodes being very similar to other nodes in the same layer is reduced. 
+
+\subsection{Fully convolutional networks}
+Typical networks used for classification take an input image and gives a class of the image, commonly decoded in a 1-hot vector. Say that the input to the fully connected layer are a few different NxN pixel feature maps. In the case of a fully connected final layer, the values of all pixels will be multiplied with their corresponding weights and then summed to produce the final output. 
+
+When working with generative networks, it is instead desired to produce an image as the output. What happens in fully convolutional networks is that the fully connected layers are removed from the architecture, and replaced with convolutional layers with kernel sizes of 1x1 pixels \citep{Fully-convolutional}. In this way, all the pixels in the same spatial location in all the NxN feature maps will contribute with their respective weights to the pixels in their corresponding locations in the 32x32 output. This can be done with multiple 1x1 convolution kernels, to reduce the depth of the feature maps step by step. In the last convolutional layer, there will be only one 1x1 convolutional kernel (per output dimension, so 3 for RGB) to produce one output image. 
+
+Upsampling is made to regain the spatial dimensions of the input image, which are usually shrunk during the convolution pipe line. 
+
+\subsection{Hypercolumns}
+Neural networks which are trained for image classification are trimmed to take notice and be discriminative on the details about structure and color, by means of feature representations, which reaches higher and higher abstraction levels deeper in the network. Usually in classification the output from the final layer and the most high-level of the feature maps are used for the classification. This seems to be sufficient and it makes sense rationally. Intuitively, it seems to be similar to how humans reason about content in images, by using only the highest level of features. 
+
+During classification, an image is boiled down to a word, a final label of the image. In colorization however, the goal is to infer new information to the image. If sky is detected in an image, blue colors would probably be a good choice. Green goes for grass, and so on. However, more hard-to-grasp information is present in the feature maps of the lower layers as an image is propagated through a network, and can be used as additional backup for the colorization task. The features of many levels helps with clues as of what colors might be appropriate to use. 
+
+The hypercolumn is defined at a pixel by a vector of the outputs of all nodes above that pixel. The hypercolumns for all pixels would thus be all activations at all nodes in the entire network. To use the entire hypercolumn for all pixels is extremely heavy for the GPU, and reduntant in information. Instead, sampling of the hypercolumns may be used, and all pixels does not always need to be considered, as well as all columns need not always be used. 
+
+The term hypercolumn was coined not long ago in \citep{Hypercolumns} where the authors were able to add spatial localization to labels in images, information which is typically lost in the later layers in a DNN. Earlier layers contain better information about where something contribute to an activation than the later layers, but does not have the information about semantics. The authors were able to combine semantics and localization and named their paper \emph{Hypercolumns for Object Segmentation and Fine-grained Localization}.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

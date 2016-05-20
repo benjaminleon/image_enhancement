@@ -1,8 +1,12 @@
 \chapter{Results}\label{cha:Research}
 %
-Det här är kapitlet där resultaten presenteras.
+As of writing, there are two colorization methods which outshine the many others. The best ones have figured out ways to circumvent the pitfall of colorizing with the most probable color based on the structure found by the network, which produces non-ideal results. See the section dedicated to the Averaging-problem, \ref{Averaging-problem}
 
-\section{Section 1}\label{sec:research:history}
+\section{Starting from existing work}\label{sec:research:history}
+To construct a new net similar to \citep{larsson2016learning}, there are a few things that needs to be done. Since a demo code is available at the authors Github page \citep{LarssonGithub}, it is not necessary to produce everything from scratch. What need so be figured out though, is how to take the existing VGG-net and add additional architecture to it and; how to remove the last fully connected classification layer and still keep the weights from the previous layers; how the hyper columns from the feature maps of the VGG network are connected as input to the new network; how to construct the caffe solver file; and lastly, how to only train the new parameters while preserving the original classification network. 
+
+After all this has been solved, an lmdb database will be constructed so that caffe can access the input and output images quickly and efficiently. This will be described in later in the report. See section ?
+\Warning[TODO]{Write section about creating the lmdb database}
 
 \section{Section 2}
 
