@@ -1,4 +1,4 @@
-# Run this script from the /home/ben/exjobb/ folder so that the text file with urls are in the path
+# Run this script from a folder so that the text file with urls are in the path
 import urllib
 import socket
 import random
