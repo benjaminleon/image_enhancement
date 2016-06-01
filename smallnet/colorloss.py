@@ -20,20 +20,20 @@ class ColorLossLayer(caffe.Layer):
         
         # difference is shape of inputs
         self.diff = np.zeros_like(bottom[0].data, dtype=np.float32)
-                
+
         # loss output is scalar
         top[0].reshape(1)
 
     def forward(self, bottom, top):
         # bottom[0] should be the guess, bottom[1] the image
-        print "guesses", bottom[0].data.shape
-        print bottom[0].data
+        # print "guesses", bottom[0].data.shape
+        # print bottom[0].data
         # print "sum: ", np.sum(bottom[0].data,axis=1) # Softmax did its job
         
         # Synthetic answer. The values represent the correct bin
         # TODO: Make answer from input image
         # Perhaps a new layer which converts images to indices of correct bins
-        print "answer: ", bottom[1].data.shape
+        # print "answer: ", bottom[1].data.shape
         bottom[1].data[0,0,0,0] = 0 # img, bin, row, col
         bottom[1].data[0,0,0,1] = 1
         bottom[1].data[0,0,0,2] = 1
@@ -47,15 +47,15 @@ class ColorLossLayer(caffe.Layer):
         bottom[1].data[1,0,1,0] = 1
         bottom[1].data[1,0,1,1] = 0
         bottom[1].data[1,0,1,2] = 0
-        print bottom[1].data
         
         [batchsize, _, rowsize, colsize] = bottom[0].data.shape # img, bin, row, col
-    
         cols = np.tile(range(colsize), rowsize)
         rows = np.repeat(range(rowsize), colsize)
-        print "cols", cols, "rows", rows
+        # print "cols", cols, "rows", rows
 
-        self.diff = 0 # Prepare for gradient backpropagation
+        # Maybe diff is reset in reshape, so the line above might be removed
+        self.diff = np.zeros_like(bottom[0].data, dtype=np.float32)
+
         batch_loss = 0
         for img in range(batchsize):
             # Find the correct bins from the answer
@@ -63,18 +63,21 @@ class ColorLossLayer(caffe.Layer):
 
             # Examine the probability estimates (guesses) of the correct bins
             guesses = bottom[0].data[img,bins,rows,cols] # For all pixels in an image
-            print "guesses", guesses
-
+            
             # For backpropagation of gradients
-            for guess in guesses:
-                print "guess", guess
-                self.diff -= 1/guess # d/dx(-log(x)) = -1/x
-
-            # Add the loss over the whole image
-            batch_loss += -np.sum(np.log(guess)) # -log(guess) = log(1/guess), as in KL-divergence
-            top[0].data[...] = batch_loss
+            for guess, correct_bin, row, col in zip(guesses, bins, rows, cols):
+                #print "guess", guess, "correct_bin", correct_bin, "row", row, "col", col 
+                self.diff[img,correct_bin,row,col] -= 1/guess # d/dx(-log(x)) = -1/x
+                
+                # Add the loss over the whole image
+                batch_loss += -np.sum(np.log(guess)) # -log(guess) = log(1/guess), as in KL-divergence
+        
+        top[0].data[...] = batch_loss
+        print "The loss was: ", top[0].data
+        #print "input", bottom[0].data
             
     def backward(self, top, propagate_down, bottom):
-        if propagate_down[1]:
-            bottom[1].diff[...] = self.diff
+        if propagate_down[0]:
+            bottom[0].diff[...] = self.diff[...]
+            #print "gradient of loss: ", bottom[0].diff[...]
             

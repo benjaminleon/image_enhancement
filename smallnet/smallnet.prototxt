@@ -1,0 +1,56 @@
+name: 'Smallnet'
+# define a simple network for linear regression on dummy data
+# that computes the loss by a PythonLayer.
+layer {
+  type: 'DummyData'
+  name: 'x'
+  top: 'x'
+  dummy_data_param {
+    shape: { dim: 3 dim: 1 dim: 2 dim: 3 }
+    data_filler: { type: 'constant' value: 1}
+  }
+}
+layer {
+  type: 'DummyData'
+  name: 'y'
+  top: 'y'
+  dummy_data_param {
+    shape: { dim: 3 dim: 1 dim: 2 dim: 3 }
+    data_filler: { type: 'gaussian' }
+  }
+}
+# Convolution that produces the guess of colors
+layer {
+  type: 'Convolution'
+  name: 'guess_x'
+  top: 'guess_x'
+  bottom: 'x'
+  convolution_param {
+    num_output: 3
+    kernel_size: 1
+    weight_filler { type: 'constant' value: 10 }
+  }
+}
+layer {
+  type: 'Softmax'
+  name: 'guess_x_softmax'
+  top: 'guess_x_softmax'
+  bottom: 'guess_x'
+}
+layer {
+  type: 'Python'
+  name: 'loss'
+  top: 'loss'
+  bottom: 'guess_x_softmax'
+  bottom: 'y'
+  python_param {
+    # the module name -- usually the filename -- that needs to be in $PYTHONPATH
+    module: 'colorloss'
+    # the layer name -- the class name in the module
+    layer: 'ColorLossLayer'
+  }
+  # set loss weight so Caffe knows this is a loss layer.
+  # since PythonLayer inherits directly from Layer, this isn't automatically
+  # known to Caffe
+  loss_weight: 1
+}
