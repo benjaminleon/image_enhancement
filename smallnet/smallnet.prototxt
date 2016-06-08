@@ -6,9 +6,12 @@ layer {
   name: 'x'
   top: 'x'
   data_param {
-    source: 'data/train_ans_lmdb'
+    source: 'data/image-lmdb'
     batch_size: 1
     backend: LMDB
+  }
+  transform_param {
+    scale: 0.00390625
   }
 }
 
@@ -17,7 +20,7 @@ layer {
   name: 'y'
   top: 'y'
   dummy_data_param {
-    shape: { dim: 1 dim: 1 dim: 10 dim: 10 }
+    shape: { dim: 1 dim: 1 dim: 224 dim: 224 }
     data_filler: { type: 'constant' value: 1 }
   }
 }
