@@ -3,25 +3,46 @@ name: 'Smallnet'
 # that computes the loss by a PythonLayer.
 layer {
   type: 'Data'
-  name: 'x'
-  top: 'x'
+  name: 'input_img'
+  top: 'input_img'
+  include { phase: TRAIN }
   data_param {
-    source: 'data/image-lmdb'
+    source: 'data/train-lmdb'
     batch_size: 1
     backend: LMDB
   }
-  transform_param {
+  transform_param { # maps [0, 255] to [0, 1]
     scale: 0.00390625
   }
 }
 
+layer { # Reference for converting to 'deploy.prototxt'
+  name: 'input_img'
+  type: 'Input'
+  top: 'input_img'
+  input_param { shape: { dim: 1 dim: 3 dim: 224 dim: 224 } }
+   include { phase: TEST }
+}
+
 layer {
-  type: 'DummyData'
-  name: 'y'
-  top: 'y'
-  dummy_data_param {
-    shape: { dim: 1 dim: 1 dim: 224 dim: 224 }
-    data_filler: { type: 'constant' value: 1 }
+  type: 'Data'
+  name: 'a'
+  top: 'a'
+  data_param {
+    source: 'data/train_ans_a-lmdb'
+    batch_size: 1
+    backend: LMDB
+  }
+}
+
+layer {
+  type: 'Data'
+  name: 'b'
+  top: 'b'
+  data_param {
+    source: 'data/train_ans_b-lmdb'
+    batch_size: 1
+    backend: LMDB
   }
 }
 
@@ -29,43 +50,82 @@ layer {
   type: 'Convolution'
   name: 'conv_1'
   top: 'conv_1'
-  bottom: 'x'
+  bottom: 'input_img'
   convolution_param {
-    num_output: 1
+    num_output: 1024
     kernel_size: 1
-    weight_filler { type: 'gaussian' }
+    weight_filler { type: 'gaussian' std: 0.1 }
   }
 }
 
-# Convolution that produces the guess of colors
+# Convolution that produces the guess of a-values
 layer {
   type: 'Convolution'
-  name: 'guess_x'
-  top: 'guess_x'
+  name: 'guess_a'
+  top: 'guess_a'
   bottom: 'conv_1'
   convolution_param {
-    num_output: 1
+    num_output: 10
     kernel_size: 1
-    weight_filler { type: 'gaussian' }
-  }
+    weight_filler { type: 'gaussian' std: 0.1 }
+ }
+}
+
+# Convolution that produces the guess of a-values
+layer {
+  type: 'Convolution'
+  name: 'guess_b'
+  top: 'guess_b'
+  bottom: 'conv_1'
+  convolution_param {
+    num_output: 10
+    kernel_size: 1
+    weight_filler { type: 'gaussian' std: 0.1 }
+ }
+}
+
+layer {
+  type: 'Softmax'
+  name: 'Softmax_a'
+  top: 'Softmax_a'
+  bottom: 'guess_a'
+}
+
+layer {
+  type: 'Softmax'
+  name: 'Softmax_b'
+  top: 'Softmax_b'
+  bottom: 'guess_b'
 }
 
 layer {
   type: 'Python'
-  name: 'loss'
-  top: 'loss'
-  bottom: 'guess_x'
-  bottom: 'y'
+  name: 'loss_a'
+  top: 'loss_a'
+  bottom: 'Softmax_a'
+  bottom: 'a'
   python_param {
     # the module name -- usually the filename -- that needs to be in $PYTHONPATH
     #    module: 'colorloss'
-    module: 'testloss'
+    module: 'colorloss'
     # the layer name -- the class name in the module
-    #    layer: 'ColorLossLayer'	 
-     layer: 'EuclideanLossLayer'
+    layer: 'ColorLossLayer'
   }
   # set loss weight so Caffe knows this is a loss layer.
   # since PythonLayer inherits directly from Layer, this isn't automatically
   # known to Caffe
+  loss_weight: 1
+}
+
+layer {
+  type: 'Python'
+  name: 'loss_b'
+  top: 'loss_b'
+  bottom: 'Softmax_b'
+  bottom: 'b'
+  python_param {
+    module: 'colorloss'
+    layer: 'ColorLossLayer'
+  }
   loss_weight: 1
 }
